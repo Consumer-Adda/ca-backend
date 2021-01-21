@@ -29,42 +29,7 @@ router.post('/createUser',(req,res)=>{
     })
 })
 
-let cases=0;
-let ccid;
 
-const mycall = ()=>{
-    console.log(`Cases : ${cases},   ${ccid}`)
-}
-
-router.get('/getCaseCount',(req,res)=>{
-    casescount.find({  })
-    .then((data)=>{
-        res.json(data)
-        const apna = data
-        console.log(apna[0].casesTillDate)
-        cases = apna[0].casesTillDate + 5
-        ccid = apna[0]._id
-        // console.log(`count ${data.casesTillDate}`)
-        mycall()
-    })
-    .catch((err)=>{
-        console.error(err);
-    })
-})
-
-
-
-// router.put('/addcasecount',(req,res)=>{
-//     casescount.findOneAndUpdate(ccid,{$set:{casesTillDate:cases+1}}, { returnOriginal : false }, (err,result)=>{
-//         if(err)
-//         {
-//             console.log(err);
-//         }
-//         else{
-//             res.status(200).json(result);
-//         }
-//     })
-// })
 
 router.post('/submitCase',(req,res)=>{
     const caseData = req.body;
