@@ -13,7 +13,7 @@ const router = express.Router();
 const ccid = '600b049fe433ce24dcea7578'
 
 router.get('/',(req,res)=>{
-    res.send('Hey there!!!');
+    res.send('Consumer-Adda Backend!   API docs to be added soon');
 })
 
 /***
