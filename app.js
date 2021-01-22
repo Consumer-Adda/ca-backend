@@ -1,3 +1,10 @@
+/***
+ * 
+ * Code by Ankit Pandey
+ * Contact - ankitpandeycu@gmail.com
+ * 
+ */
+
 const express = require('express')
 const connectDB = require('./db')
 const dotenv = require('dotenv');
