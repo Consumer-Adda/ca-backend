@@ -10,12 +10,11 @@ const UserData = require('../models/User')
 const CaseData = require('../models/Case')
 const casescount = require('../models/CasesCount')
 const router = express.Router();
-const ccid = '6009e154ac2b8019944a6b88'
+const ccid = '600b049fe433ce24dcea7578'
 
 router.get('/',(req,res)=>{
     res.send('Hey there!!!');
 })
-
 
 /***
  * 
@@ -61,6 +60,8 @@ router.get('/getlawyers',(req,res)=>{
     })
 })
 
+
+////
 /*** (ADMIN App) Getting NOT VERIFIED lawyers */
 router.get('/getNotVerified',(req,res)=>{
     UserData.find({ $and:[{isLawyer:true,isVerified:false}] })
