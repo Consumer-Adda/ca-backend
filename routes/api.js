@@ -10,7 +10,7 @@ const UserData = require('../models/User')
 const CaseData = require('../models/Case')
 const casescount = require('../models/CasesCount')
 const router = express.Router();
-const ccid = '600b049fe433ce24dcea7578'
+// const ccid = '600b049fe433ce24dcea7578'
 
 router.get('/',(req,res)=>{
     res.send('Consumer-Adda Backend!   API docs to be added soon');
@@ -159,7 +159,7 @@ router.post('/submitCase',(req,res)=>{
 
 /*** Adding Case to DB-log */
 router.patch('/addcase',(req,res)=>{
-    casescount.findByIdAndUpdate(ccid,{$inc:{casesTillDate:1}},{new:true},(err,result)=>{
+    casescount.findByIdAndUpdate(process.env.ccid,{$inc:{casesTillDate:1}},{new:true},(err,result)=>{
         if(err)
         {
             console.log(err);
