@@ -10,7 +10,6 @@ const UserData = require('../models/User')
 const CaseData = require('../models/Case')
 const casescount = require('../models/CasesCount')
 const router = express.Router();
-// const ccid = '600b049fe433ce24dcea7578'
 
 router.get('/',(req,res)=>{
     res.send('Consumer-Adda Backend!   API docs to be added soon');
