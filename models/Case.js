@@ -74,6 +74,11 @@ const CaseSchema = new mongoose.Schema({
         required:true,
         default:'N/A'
     },
+    lawyerEmail:{
+        type:String,
+        required:true,
+        default:'N/A'
+    },
     caseStatus:{
         type: Number, 
         required:true,
@@ -111,5 +116,6 @@ module.exports = CaseData
  applicantPhone:'9876543210',
  lawyerFirebaseId:'testlawyerFirebaseId',
  lawyerName:'testLaywerName',
+ lawyerEmail:'testLawyerEmail'
  caseStatus:0
  */
