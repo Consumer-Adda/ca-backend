@@ -26,9 +26,19 @@ const CaseSchema = new mongoose.Schema({
         type:String,
         required:true
     },
+    stateNumber:{
+        type: Number, 
+        required:true,
+        set: function (v) { return Math.round(v) ;}
+    },
     applicantDistrict:{
         type:String,
         required:true
+    },
+    districtNumber:{
+        type: Number, 
+        required:true,
+        set: function (v) { return Math.round(v) ;}
     },
     caseAgainst:{
         type:String,
@@ -103,7 +113,9 @@ module.exports = CaseData
  applicantFirstName:'testapplicantFirstName',
  applicantLastName:'testapplicantLastName',
  applicantState:'testapplicantState',
+ stateNumber:0
  applicantDistrict:'testapplicantDistrict',
+ districtNumber:0
  caseAgainst:'testcaseAgainst',
  caseType:'testCaseType',
  caseDescription:'testcaseDescription',

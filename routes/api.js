@@ -249,7 +249,7 @@ router.get('/getCases/:id',(req,res)=>{
      const notassigned = 'N/A'
      const lawyerState = req.params.states
      const lawyerDistrict = req.params.district
-     CaseData.find({ $and: [{lawyerFirebaseId: notassigned},{applicantState:lawyerState},{applicantDistrict:lawyerDistrict}] })
+     CaseData.find({ $and: [{lawyerFirebaseId: notassigned},{stateNumber:lawyerState},{districtNumber:lawyerDistrict}] })
      .then((data)=>{
         res.status(200).json(data)
      })
@@ -265,7 +265,7 @@ router.get('/getCases/:id',(req,res)=>{
  router.get('/seeCasesS/:states',(req,res)=>{
     const notassigned = 'N/A'
     const lawyerState = req.params.states
-    CaseData.find({ $and: [{lawyerFirebaseId: notassigned},{applicantState:lawyerState}] })
+    CaseData.find({ $and: [{lawyerFirebaseId: notassigned},{stateNumber:lawyerState}] })
     .then((data)=>{
        res.status(200).json(data)
     })
