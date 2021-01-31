@@ -278,11 +278,12 @@ router.get('/getCases/:id',(req,res)=>{
  })
 
  /*** Accepting open case */
- router.patch('/accept/:id/:fid/:name/:email',(req,res)=>{
-     const cid = req.params.id
-     const lawyerFireId = req.params.fid
-     const lawyername = req.params.name
-     const lawyeremail = req.params.email
+ router.patch('/accept/:id',(req,res)=>{
+    var rbody = req.body
+    const cid = req.params.id
+    const lawyerFireId = rbody.lawyerFirebaseId
+    const lawyername = rbody.lawyerName
+    const lawyeremail = rbody.lawyerEmail
      var today = new Date()
 
      CaseData.findOneAndUpdate({caseId:cid},{$set:{lawyerFirebaseId:lawyerFireId, lawyerName:lawyername, lawyerEmail:lawyeremail,lastActionDate:today}} )
