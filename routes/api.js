@@ -9,7 +9,16 @@ const express = require('express')
 const UserData = require('../models/User')
 const CaseData = require('../models/Case')
 const casescount = require('../models/CasesCount')
+var admin = require('firebase-admin')
 const router = express.Router();
+
+var serviceAccount = require("../consumeradda-a5a94-firebase-adminsdk-gvx8r-b0789596e4.json");
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: "https://consumeradda-a5a94.firebaseio.com"
+});
+
 
 router.get('/',(req,res)=>{
     res.send('Consumer-Adda Backend!   API docs to be added soon');
@@ -22,6 +31,21 @@ router.get('/',(req,res)=>{
  * POST - /createUser
  * 
  */
+
+function auth(req,res,next){
+    const idToken = req.params.token
+    admin.auth().verifyIdToken(idToken)
+    .then((decodedToken)=>{
+        next()
+    })
+    .catch((err)=>{
+        res.status(401).json({
+            msg:'Session Expired. Please restart the app!'
+        })
+    })
+}
+
+ 
 
 /*** (Common) User Creation API*/
 router.post('/createUser',(req,res)=>{
@@ -59,8 +83,6 @@ router.get('/getlawyers',(req,res)=>{
     })
 })
 
-
-////
 /*** (ADMIN App) Getting NOT VERIFIED lawyers */
 router.get('/getNotVerified',(req,res)=>{
     UserData.find({ $and:[{isLawyer:true,isVerified:false}] })
@@ -129,13 +151,14 @@ router.get('/details/:id',(req,res)=>{
  * 
  * Case APIs
  * 
- * POST - /submitCase
- * PATCH - /addcase
+ * POST - /submitCase/token
+ * PATCH - /addcase/token
+ * PATCH - /updateStatus/caseId/NewStatus/token
  * 
  */
 
-/*** Case Submission API */
-router.post('/submitCase',(req,res)=>{
+/*** Case Submission API - Token Required  */
+router.post('/submitCase/:token',auth,(req,res)=>{
     const caseData = req.body;
     const newCase = new CaseData(caseData)
     newCase.save((err)=>{
@@ -155,8 +178,8 @@ router.post('/submitCase',(req,res)=>{
     })
 })
 
-/*** Adding Case to DB-log */
-router.patch('/addcase',(req,res)=>{
+/*** Adding Case to DB-log - Token Required  */
+router.patch('/addcase/:token',auth,(req,res)=>{
     casescount.findByIdAndUpdate(process.env.ccid,{$inc:{casesTillDate:1}},{new:true},(err,result)=>{
         if(err)
         {
@@ -172,8 +195,8 @@ router.patch('/addcase',(req,res)=>{
     })
 })
 
-/*** Updating case status */
-router.patch('/updateStatus/:id/:status',(req,res)=>{
+/*** Updating case status - Token Required  */
+router.patch('/updateStatus/:id/:status/:token',auth,(req,res)=>{
     const cid = req.params.id;
     const newStatus = req.params.status
     var today = new Date();
@@ -197,12 +220,12 @@ router.patch('/updateStatus/:id/:status',(req,res)=>{
 /***
  * 
  * Dashboard APIs 
- * GET - /userData/:id
- * GET - /getCases/:id
+ * GET - /userData/:id/:token
+ * GET - /getCases/:id/:token
  * 
  * */
 /*** Getting User Data for Dashboard */
-router.get('/userData/:id',(req,res)=>{
+router.get('/userData/:id/:token',auth,(req,res)=>{
     const fireId = req.params.id;
 
     UserData.find({ firebaseId:fireId })
@@ -217,8 +240,8 @@ router.get('/userData/:id',(req,res)=>{
     })
 })
 
-/*** Getting User Cases for Dashboard */
-router.get('/getCases/:id',(req,res)=>{
+/*** Getting User Cases for Dashboard - Token Required  */
+router.get('/getCases/:id/:token',auth,(req,res)=>{
     const fireId = req.params.id;
 
     CaseData.find({ $and:[{$or:[{applicantFirebaseId:fireId},{lawyerFirebaseId:fireId}]},{caseStatus:{$lte:3}}] })
@@ -239,12 +262,12 @@ router.get('/getCases/:id',(req,res)=>{
  * Lawyer's APIs
  * GET - /seeCasesSD/:states/:district
  * GET - /seeCasesS/:states
- * PATCH - /accept/:id/:lawyerFId/:lawyerName
+ * PATCH - /accept/:id/:token
  * 
  */
 
- /*** Getting all open cases whose State and District are given */
- router.get('/seeCasesSD/:states/:district',(req,res)=>{
+ /*** Getting all open cases whose State and District are given - Token Required  */
+ router.get('/seeCasesSD/:states/:district/:token',auth,(req,res)=>{
      const notassigned = 'N/A'
      const lawyerState = req.params.states
      const lawyerDistrict = req.params.district
@@ -260,8 +283,8 @@ router.get('/getCases/:id',(req,res)=>{
      })
  })
 
- /*** Getting all open cases whose State are given */
- router.get('/seeCasesS/:states',(req,res)=>{
+ /*** Getting all open cases whose State are given - Token Required */
+ router.get('/seeCasesS/:states/:token',auth,(req,res)=>{
     const notassigned = 'N/A'
     const lawyerState = req.params.states
     CaseData.find({ $and: [{lawyerFirebaseId: notassigned},{stateNumber:lawyerState}] })
@@ -276,8 +299,8 @@ router.get('/getCases/:id',(req,res)=>{
     })
  })
 
- /*** Accepting open case */
- router.patch('/accept/:id',(req,res)=>{
+ /*** Accepting open case - Token Required */
+ router.patch('/accept/:id/:token',auth,(req,res)=>{
     var rbody = req.body
     const cid = req.params.id
     const lawyerFireId = rbody.lawyerFirebaseId
