@@ -45,6 +45,20 @@ function auth(req,res,next){
     })
 }
 
+function adminAuth(req,res,next)
+{
+    const token = req.params.token
+    if(token==="ConsumerAddaAdmin")
+    {
+        next()
+    }
+    else
+    {
+        res.status(401).json({
+            msg:'Invalid token! Contact Ankit Pandey'
+        })
+    }
+}
  
 
 /*** (Common) User Creation API*/
@@ -70,7 +84,7 @@ router.post('/createUser',(req,res)=>{
 })
 
 /*** (ADMIN App) Getting VERIFIED lawyers */
-router.get('/getlawyers',(req,res)=>{
+router.get('/getlawyers/:token',adminAuth,(req,res)=>{
     UserData.find({ $and:[{isLawyer:true,isVerified:true}] })
     .then((data)=>{
         res.status(200).json(data);
@@ -84,7 +98,7 @@ router.get('/getlawyers',(req,res)=>{
 })
 
 /*** (ADMIN App) Getting NOT VERIFIED lawyers */
-router.get('/getNotVerified',(req,res)=>{
+router.get('/getNotVerified/:token',adminAuth,(req,res)=>{
     UserData.find({ $and:[{isLawyer:true,isVerified:false}] })
     .then((data)=>{
         res.status(200).json(data);
@@ -98,7 +112,7 @@ router.get('/getNotVerified',(req,res)=>{
 })
 
 /*** (ADMIN App) Verify lawyer */
-router.patch('/verify/:id',(req,res)=>{
+router.patch('/verify/:id/:token',adminAuth,(req,res)=>{
     const fireId = req.params.id
     UserData.findOneAndUpdate({firebaseId:fireId},{$set:{isVerified:true}})
     .then((data)=>{
@@ -116,7 +130,7 @@ router.patch('/verify/:id',(req,res)=>{
 })
 
 /*** (ADMIN App) Remove Lawyer  -  (In initial release Removing lawyer means Unverifying them) */
-router.patch('/unverify/:id',(req,res)=>{
+router.patch('/unverify/:id/:token',adminAuth,(req,res)=>{
     const fireId = req.params.id
     UserData.findOneAndUpdate({firebaseId:fireId},{$set:{isVerified:false}})
     .then((data)=>{
@@ -134,7 +148,7 @@ router.patch('/unverify/:id',(req,res)=>{
 })
 
 /*** (ADMIN App) See Case Details */
-router.get('/details/:id',(req,res)=>{
+router.get('/details/:id/:token',adminAuth,(req,res)=>{
     const cid = req.params.id;
     CaseData.find({ caseId:cid })
     .then((data)=>{
