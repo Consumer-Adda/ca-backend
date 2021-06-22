@@ -16,7 +16,7 @@ var serviceAccount = require("../consumeradda-a5a94-firebase-adminsdk-gvx8r-b078
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  databaseURL: "https://consumeradda-a5a94.firebaseio.com"
+  databaseURL: process.env.FIREBASE_URI
 });
 
 
@@ -48,7 +48,7 @@ function auth(req,res,next){
 function adminAuth(req,res,next)
 {
     const token = req.params.token
-    if(token==="ConsumerAddaAdmin")
+    if(token===process.env.ADMIN_TOKEN)
     {
         next()
     }
